@@ -5,8 +5,11 @@
  */
 package com.tastyBurger.servlets;
 
+import com.tastyBurger.BO.customerBO;
+import com.tastyBurger.beans.customerBean;
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,8 +20,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author VBlue
  */
-@WebServlet(name = "loginServ", urlPatterns = {"/loginServ"})
-public class loginServ extends HttpServlet {
+@WebServlet(name = "regServ", urlPatterns = {"/regServ"})
+public class regServ extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,7 +47,7 @@ public class loginServ extends HttpServlet {
             throws ServletException, IOException {
         
     }
-    
+
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -56,7 +59,29 @@ public class loginServ extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        RequestDispatcher rd = null;
         
+        customerBean cus = new customerBean();
+        customerBO cusBO = new customerBO();
+        
+        cus.setFname(request.getParameter("inputFirstName"));
+        cus.setLname(request.getParameter("inputLastName"));
+        cus.setAddress(request.getParameter("inputAddress"));
+        cus.setSuburb(request.getParameter("inputSuburb"));
+        cus.setPostcode(request.getParameter("inputPostcode"));
+        cus.setPhoneNumber(request.getParameter("inputPhone"));
+        cus.setEmail(request.getParameter("exampleInputEmail1"));
+        cus.setPassword(request.getParameter("exampleInputPassword1"));
+        cus.setConfirmPassword(request.getParameter("exampleInputConfirmPassword1"));
+        
+        int addCus = cusBO.addCustomer(cus);
+        
+        if (addCus > 0) {
+            rd = request.getRequestDispatcher("/thankyou.html");
+        } else {
+            rd = request.getRequestDispatcher("/temp.html");
+        }
+        rd.forward(request, response);
     }
 
     /**
