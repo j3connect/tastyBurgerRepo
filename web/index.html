@@ -87,6 +87,23 @@
                                         <div class="text-center"><h3><b>Log In</b></h3></div>
 
                                         <form id="ajax-login-form" action="loginServ" method="post" role="form" autocomplete="off">
+                                            
+                                            <%!
+						String resultFlagString = request.getParameter("resultFlag");
+						if(resultFlagString != null && !"".equals(resultFlagString)) {
+							int resultFlag = Integer.parseInt(resultFlagString);
+							if(resultFlag == 1) {
+								out.println("<tr><td colspan='2'>UserId/Password Blank.</td></tr>");
+							} else if(resultFlag == 2) {
+								out.println("<tr><td colspan='2'>Userid/Password Wrong.</td></tr>");
+							} else if(resultFlag == 3) {
+								out.println("<tr><td colspan='2'>Please try later.</td></tr>");
+							} else if(resultFlag == -3) {
+								out.println("<tr><td colspan='2'>Please Log In First.</td></tr>");
+							}
+						}
+                                            %>
+                                            
                                             <div class="form-group">
                                                 <label for="inputEmail">Email address</label>
                                                 <input type="email" name="inputEmail" class="form-control" tabindex="1" id="inputEmail" placeholder="Email" value="" autocomplete="off">

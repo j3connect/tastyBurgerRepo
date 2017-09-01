@@ -6,9 +6,13 @@
 package com.tastyBurger.DAO;
 
 import com.tastyBurger.beans.customerBean;
+import com.tastyBurger.beans.loginBean;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -18,6 +22,8 @@ public class customerDAO {
     
     private Connection connection;
     private PreparedStatement insertCustomer = null;
+    private PreparedStatement loginQuery = null;
+    private PreparedStatement codeInsert = null;
     
     public customerDAO() {
         
@@ -25,8 +31,10 @@ public class customerDAO {
             connection = connectionDAO.getConnection();
             
             insertCustomer = connection.prepareStatement("insert into customer(first_name, last_name, address, suburb, postcode, phone, email,                                                                                              password) values(?,?,?,?,?,?,?,?)");
-        } catch (SQLException e) {
-            e.printStackTrace();
+            loginQuery = connection.prepareStatement("select password from customer where email=?");
+            codeInsert = connection.prepareStatement("update customer set code=? where email=?");
+        } catch (SQLException ex) {
+            Logger.getLogger(customerDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -46,11 +54,58 @@ public class customerDAO {
             
             updateResult = insertCustomer.executeUpdate();
             
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        } catch (SQLException ex) {
+            Logger.getLogger(customerDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            connectionDAO.closeConnection(connection);
+	}
         
         return updateResult;
+    }
+    
+    public int login(loginBean lb) {
+        
+        int result = 0;
+        
+        try {
+            loginQuery.setString(1, lb.getEmail());
+            
+            ResultSet rs = loginQuery.executeQuery();
+            
+            String DBPassword = rs.getString(1);
+            
+            if (DBPassword.equals("")) {
+                result = 1;
+            } else if (DBPassword.equals(lb.getPassword())) {
+                result = 2;
+            } else {
+                result = 3;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(customerDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            connectionDAO.closeConnection(connection);
+	}
+        
+        return result;
+    }
+    
+    public int setCode(int code, String email) throws SQLException {
+		
+	
+	int j = 0;
+	try {
+            codeInsert.setInt(1, code);
+            codeInsert.setString(2, email);
+            
+            j = codeInsert.executeUpdate();
+           
+	} catch (SQLException ex) {
+            Logger.getLogger(customerDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            connectionDAO.closeConnection(connection);
+	}
+        return j;
     }
    
 }

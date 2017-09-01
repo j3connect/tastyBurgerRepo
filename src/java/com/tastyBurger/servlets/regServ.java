@@ -15,6 +15,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -73,6 +74,9 @@ public class regServ extends HttpServlet {
         cus.setEmail(request.getParameter("exampleInputEmail1"));
         cus.setPassword(request.getParameter("exampleInputPassword1"));
         cus.setConfirmPassword(request.getParameter("exampleInputConfirmPassword1"));
+        
+        HttpSession session = request.getSession();
+	session.setAttribute("email", cus.getEmail());
         
         int addCus = cusBO.addCustomer(cus);
         

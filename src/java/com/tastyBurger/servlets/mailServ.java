@@ -5,23 +5,24 @@
  */
 package com.tastyBurger.servlets;
 
+import com.ppms.bo.mailBO;
 import com.tastyBurger.BO.customerBO;
 import com.tastyBurger.beans.loginBean;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author VBlue
  */
-@WebServlet(name = "loginServ", urlPatterns = {"/loginServ"})
-public class loginServ extends HttpServlet {
+@WebServlet(name = "mailServ", urlPatterns = {"/mailServ"})
+public class mailServ extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -60,14 +61,23 @@ public class loginServ extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        HttpSession session = request.getSession();
+	String email = (String) session.getAttribute("email");
+        
+        response.setHeader("Cache-Control", "no-cache,no-store,must-revalidate");
+	response.setHeader("Pragma", "no-cache");
+	response.setHeader("Expires", "0");
+        
         customerBO cusBO = new customerBO();
-        loginBean lb = new loginBean();
-        RequestDispatcher rd = null;
+        mailBO mail = new mailBO();
         
-        lb.setEmail(request.getParameter("inputEmail"));
-        lb.setPassword(request.getParameter("inputPassword"));
-        
-        int loginResult = cusBO.login(lb);
+        try {
+            int code = cusBO.randomNumber();
+            int j = cusBO.setCode(code, email);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

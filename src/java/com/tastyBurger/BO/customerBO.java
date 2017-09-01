@@ -7,6 +7,8 @@ package com.tastyBurger.BO;
 
 import com.tastyBurger.DAO.customerDAO;
 import com.tastyBurger.beans.customerBean;
+import com.tastyBurger.beans.loginBean;
+import java.util.Random;
 
 /**
  *
@@ -21,6 +23,27 @@ public class customerBO {
         int addCus = cusOperations.addCustomer(customer);
         
         return addCus;
+    }
+    
+    public int login (loginBean lb) {
+        int result = cusOperations.login(lb);
+        return result;
+    }
+    
+    public int randomNumber() throws Exception {
+		
+        // create random object
+	Random randomno = new Random();
+	 
+	// check next int value  
+	int j = randomno.nextInt(10000);
+	System.out.println("Code value: " + j);
+	return j;
+    }
+    
+    public int setCode(int code, String email) throws Exception {
+        int result = cusOperations.setCode(code, email);
+        return result;
     }
     
 }
